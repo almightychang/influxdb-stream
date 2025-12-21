@@ -2,7 +2,7 @@
 
 [![Crates.io](https://img.shields.io/crates/v/influxdb-stream.svg)](https://crates.io/crates/influxdb-stream)
 [![Documentation](https://docs.rs/influxdb-stream/badge.svg)](https://docs.rs/influxdb-stream)
-[![License](https://img.shields.io/crates/l/influxdb-stream.svg)](LICENSE)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 **Async streaming client for InfluxDB 2.x** — Query millions of time-series rows without running out of memory.
 
@@ -318,12 +318,7 @@ cargo bench
 
 ## License
 
-Licensed under either of:
-
-- Apache License, Version 2.0 ([LICENSE-APACHE](LICENSE-APACHE) or http://www.apache.org/licenses/LICENSE-2.0)
-- MIT License ([LICENSE-MIT](LICENSE-MIT) or http://opensource.org/licenses/MIT)
-
-at your option.
+This project is licensed under the [MIT License](LICENSE).
 
 ## Contributing
 
