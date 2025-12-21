@@ -177,3 +177,223 @@ impl FluxRecord {
         self.values.get("_value")
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use chrono::{DateTime, Datelike};
+    use ordered_float::OrderedFloat;
+
+    // =========================================================================
+    // DataType tests
+    // =========================================================================
+
+    #[test]
+    fn test_datatype_from_str() {
+        assert_eq!(DataType::from_str("string").unwrap(), DataType::String);
+        assert_eq!(DataType::from_str("double").unwrap(), DataType::Double);
+        assert_eq!(DataType::from_str("boolean").unwrap(), DataType::Bool);
+        assert_eq!(DataType::from_str("long").unwrap(), DataType::Long);
+        assert_eq!(DataType::from_str("unsignedLong").unwrap(), DataType::UnsignedLong);
+        assert_eq!(DataType::from_str("duration").unwrap(), DataType::Duration);
+        assert_eq!(DataType::from_str("base64Binary").unwrap(), DataType::Base64Binary);
+        assert_eq!(DataType::from_str("dateTime:RFC3339").unwrap(), DataType::TimeRFC);
+        assert_eq!(DataType::from_str("dateTime:RFC3339Nano").unwrap(), DataType::TimeRFC);
+    }
+
+    #[test]
+    fn test_datatype_from_str_unknown() {
+        let result = DataType::from_str("unknown");
+        assert!(result.is_err());
+    }
+
+    #[test]
+    fn test_datatype_display() {
+        assert_eq!(DataType::String.to_string(), "string");
+        assert_eq!(DataType::Double.to_string(), "double");
+        assert_eq!(DataType::Bool.to_string(), "boolean");
+        assert_eq!(DataType::Long.to_string(), "long");
+        assert_eq!(DataType::UnsignedLong.to_string(), "unsignedLong");
+        assert_eq!(DataType::Duration.to_string(), "duration");
+        assert_eq!(DataType::Base64Binary.to_string(), "base64Binary");
+        assert_eq!(DataType::TimeRFC.to_string(), "dateTime:RFC3339");
+    }
+
+    #[test]
+    fn test_datatype_roundtrip() {
+        // Parse and display should be consistent
+        for type_str in ["string", "double", "boolean", "long", "unsignedLong", "duration", "base64Binary", "dateTime:RFC3339"] {
+            let dt = DataType::from_str(type_str).unwrap();
+            assert_eq!(dt.to_string(), type_str);
+        }
+    }
+
+    // =========================================================================
+    // FluxColumn tests
+    // =========================================================================
+
+    #[test]
+    fn test_flux_column_new() {
+        let col = FluxColumn::new();
+        assert_eq!(col.name, "");
+        assert_eq!(col.data_type, DataType::String);
+        assert!(!col.group);
+        assert_eq!(col.default_value, "");
+    }
+
+    #[test]
+    fn test_flux_column_default() {
+        let col = FluxColumn::default();
+        assert_eq!(col.name, "");
+        assert_eq!(col.data_type, DataType::String);
+        assert!(!col.group);
+        assert_eq!(col.default_value, "");
+    }
+
+    // =========================================================================
+    // FluxTableMetadata tests
+    // =========================================================================
+
+    #[test]
+    fn test_flux_table_metadata_new() {
+        let table = FluxTableMetadata::new(0, 3);
+        assert_eq!(table.position, 0);
+        assert_eq!(table.columns.len(), 3);
+    }
+
+    #[test]
+    fn test_flux_table_metadata_column() {
+        let mut table = FluxTableMetadata::new(0, 2);
+        table.columns[0].name = "col1".to_string();
+        table.columns[1].name = "col2".to_string();
+
+        assert!(table.column("col1").is_some());
+        assert_eq!(table.column("col1").unwrap().name, "col1");
+        assert!(table.column("col2").is_some());
+        assert!(table.column("nonexistent").is_none());
+    }
+
+    // =========================================================================
+    // FluxRecord tests
+    // =========================================================================
+
+    #[test]
+    fn test_flux_record_new() {
+        let record = FluxRecord::new(5);
+        assert_eq!(record.table, 5);
+        assert!(record.values.is_empty());
+    }
+
+    #[test]
+    fn test_flux_record_get() {
+        let mut record = FluxRecord::new(0);
+        record.values.insert("key".to_string(), Value::String("value".to_string()));
+
+        assert!(record.get("key").is_some());
+        assert_eq!(record.get("key"), Some(&Value::String("value".to_string())));
+        assert!(record.get("nonexistent").is_none());
+    }
+
+    #[test]
+    fn test_flux_record_get_string() {
+        let mut record = FluxRecord::new(0);
+        record.values.insert("name".to_string(), Value::String("alice".to_string()));
+        record.values.insert("count".to_string(), Value::Long(42));
+
+        assert_eq!(record.get_string("name"), Some("alice".to_string()));
+        assert_eq!(record.get_string("count"), None); // Not a string
+        assert_eq!(record.get_string("nonexistent"), None);
+    }
+
+    #[test]
+    fn test_flux_record_get_double() {
+        let mut record = FluxRecord::new(0);
+        record.values.insert("value".to_string(), Value::Double(OrderedFloat::from(3.14)));
+        record.values.insert("name".to_string(), Value::String("test".to_string()));
+
+        assert_eq!(record.get_double("value"), Some(3.14));
+        assert_eq!(record.get_double("name"), None); // Not a double
+        assert_eq!(record.get_double("nonexistent"), None);
+    }
+
+    #[test]
+    fn test_flux_record_get_long() {
+        let mut record = FluxRecord::new(0);
+        record.values.insert("count".to_string(), Value::Long(-42));
+        record.values.insert("name".to_string(), Value::String("test".to_string()));
+
+        assert_eq!(record.get_long("count"), Some(-42));
+        assert_eq!(record.get_long("name"), None); // Not a long
+        assert_eq!(record.get_long("nonexistent"), None);
+    }
+
+    #[test]
+    fn test_flux_record_get_bool() {
+        let mut record = FluxRecord::new(0);
+        record.values.insert("flag".to_string(), Value::Bool(true));
+        record.values.insert("name".to_string(), Value::String("test".to_string()));
+
+        assert_eq!(record.get_bool("flag"), Some(true));
+        assert_eq!(record.get_bool("name"), None); // Not a bool
+        assert_eq!(record.get_bool("nonexistent"), None);
+    }
+
+    #[test]
+    fn test_flux_record_time() {
+        let mut record = FluxRecord::new(0);
+        let dt = DateTime::parse_from_rfc3339("2023-11-14T12:00:00Z").unwrap();
+        record.values.insert("_time".to_string(), Value::TimeRFC(dt));
+
+        assert!(record.time().is_some());
+        assert_eq!(record.time().unwrap().year(), 2023);
+    }
+
+    #[test]
+    fn test_flux_record_time_missing() {
+        let record = FluxRecord::new(0);
+        assert!(record.time().is_none());
+    }
+
+    #[test]
+    fn test_flux_record_measurement() {
+        let mut record = FluxRecord::new(0);
+        record.values.insert("_measurement".to_string(), Value::String("cpu".to_string()));
+
+        assert_eq!(record.measurement(), Some("cpu".to_string()));
+    }
+
+    #[test]
+    fn test_flux_record_measurement_missing() {
+        let record = FluxRecord::new(0);
+        assert!(record.measurement().is_none());
+    }
+
+    #[test]
+    fn test_flux_record_field() {
+        let mut record = FluxRecord::new(0);
+        record.values.insert("_field".to_string(), Value::String("temperature".to_string()));
+
+        assert_eq!(record.field(), Some("temperature".to_string()));
+    }
+
+    #[test]
+    fn test_flux_record_field_missing() {
+        let record = FluxRecord::new(0);
+        assert!(record.field().is_none());
+    }
+
+    #[test]
+    fn test_flux_record_value() {
+        let mut record = FluxRecord::new(0);
+        record.values.insert("_value".to_string(), Value::Double(OrderedFloat::from(25.5)));
+
+        assert!(record.value().is_some());
+        assert_eq!(record.value(), Some(&Value::Double(OrderedFloat::from(25.5))));
+    }
+
+    #[test]
+    fn test_flux_record_value_missing() {
+        let record = FluxRecord::new(0);
+        assert!(record.value().is_none());
+    }
+}
