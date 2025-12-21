@@ -6,6 +6,8 @@
 
 **Async streaming client for InfluxDB 2.x** — Query millions of time-series rows without running out of memory.
 
+> 💡 Other Rust clients are async but load all results into `Vec<T>`. This crate is the first to offer true record-by-record streaming.
+
 ## The Problem
 
 Existing Rust InfluxDB clients load entire query results into memory:
@@ -37,6 +39,8 @@ while let Some(record) = stream.next().await {
 | `influxdb2` | 2.x | ✅ | ❌ | ❌ |
 | `influx_db_client` | 1.x/2.x | ✅ | ❌ | ❌ |
 | **`influxdb-stream`** | **2.x** | **✅** | **✅** | **✅** |
+
+> All crates are async, but return `Vec<T>`. Only `influxdb-stream` streams record-by-record.
 
 ## Benchmark Results
 
