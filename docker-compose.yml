@@ -1,0 +1,23 @@
+services:
+  influxdb:
+    image: influxdb:2.7
+    container_name: influxdb-stream-test
+    ports:
+      - "8086:8086"
+    environment:
+      - DOCKER_INFLUXDB_INIT_MODE=setup
+      - DOCKER_INFLUXDB_INIT_USERNAME=admin
+      - DOCKER_INFLUXDB_INIT_PASSWORD=adminadmin
+      - DOCKER_INFLUXDB_INIT_ORG=test-org
+      - DOCKER_INFLUXDB_INIT_BUCKET=test-bucket
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=test-token-for-development-only
+    volumes:
+      - influxdb-data:/var/lib/influxdb2
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8086/health"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  influxdb-data:
