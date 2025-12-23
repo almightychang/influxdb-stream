@@ -1,0 +1,84 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+env:
+  CARGO_TERM_COLOR: always
+  RUST_BACKTRACE: 1
+
+jobs:
+  fmt:
+    name: Format
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt
+      - run: cargo fmt --all --check
+
+  clippy:
+    name: Clippy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo clippy --all-targets --all-features -- -D warnings
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo test --lib --all-features
+
+  integration:
+    name: Integration Tests
+    runs-on: ubuntu-latest
+    services:
+      influxdb:
+        image: influxdb:2.7
+        ports:
+          - 8086:8086
+        env:
+          DOCKER_INFLUXDB_INIT_MODE: setup
+          DOCKER_INFLUXDB_INIT_USERNAME: admin
+          DOCKER_INFLUXDB_INIT_PASSWORD: adminpassword
+          DOCKER_INFLUXDB_INIT_ORG: test-org
+          DOCKER_INFLUXDB_INIT_BUCKET: test-bucket
+          DOCKER_INFLUXDB_INIT_ADMIN_TOKEN: test-token
+        options: >-
+          --health-cmd "curl -f http://localhost:8086/health"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo test --test integration_tests
+        env:
+          INFLUXDB_URL: http://localhost:8086
+          INFLUXDB_TOKEN: test-token
+          INFLUXDB_ORG: test-org
+          INFLUXDB_BUCKET: test-bucket
+
+  docs:
+    name: Docs
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo doc --no-deps --all-features
+        env:
+          RUSTDOCFLAGS: -D warnings

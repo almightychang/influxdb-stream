@@ -308,10 +308,10 @@ mod tests {
     #[test]
     fn test_flux_record_get_double() {
         let mut record = FluxRecord::new(0);
-        record.values.insert("value".to_string(), Value::Double(OrderedFloat::from(3.14)));
+        record.values.insert("value".to_string(), Value::Double(OrderedFloat::from(2.72)));
         record.values.insert("name".to_string(), Value::String("test".to_string()));
 
-        assert_eq!(record.get_double("value"), Some(3.14));
+        assert_eq!(record.get_double("value"), Some(2.72));
         assert_eq!(record.get_double("name"), None); // Not a double
         assert_eq!(record.get_double("nonexistent"), None);
     }

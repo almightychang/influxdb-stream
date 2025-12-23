@@ -345,7 +345,7 @@ async fn test_various_data_types() {
     clear_bucket().await.unwrap();
 
     // Write data with various field types
-    let lines = r#"types,tag=test int_field=42i,float_field=3.14,bool_field=true,string_field="hello" 1700000000000"#;
+    let lines = r#"types,tag=test int_field=42i,float_field=2.72,bool_field=true,string_field="hello" 1700000000000"#;
     write_test_data(lines).await.unwrap();
 
     tokio::time::sleep(Duration::from_millis(500)).await;
@@ -374,7 +374,7 @@ async fn test_various_data_types() {
             }
             Some("float_field") => {
                 let val = record.get_double("_value").unwrap();
-                assert!((val - 3.14).abs() < 0.001);
+                assert!((val - 2.72).abs() < 0.001);
                 found_float = true;
             }
             Some("bool_field") => {

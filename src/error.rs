@@ -19,7 +19,10 @@ pub enum Error {
 
     /// Failed to parse a value from the response.
     #[error("Failed to parse value: {message}")]
-    Parse { message: String },
+    Parse {
+        /// Description of what failed to parse.
+        message: String,
+    },
 
     /// Unknown data type in annotated CSV.
     #[error("Unknown data type: {0}")]
@@ -31,11 +34,21 @@ pub enum Error {
 
     /// Row has different number of columns than expected.
     #[error("Column count mismatch: expected {expected}, got {actual}")]
-    ColumnMismatch { expected: usize, actual: usize },
+    ColumnMismatch {
+        /// Expected number of columns.
+        expected: usize,
+        /// Actual number of columns found.
+        actual: usize,
+    },
 
     /// Query returned an error from InfluxDB.
     #[error("Query error from InfluxDB: {message}")]
-    QueryError { message: String, reference: Option<String> },
+    QueryError {
+        /// Error message returned by InfluxDB.
+        message: String,
+        /// Optional reference link for debugging.
+        reference: Option<String>,
+    },
 
     /// I/O error during streaming.
     #[error("I/O error: {0}")]

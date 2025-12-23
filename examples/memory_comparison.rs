@@ -64,7 +64,7 @@ fn write_benchmark_data(measurement: &str, count: usize) {
         // Write data in batches
         let batch_size = 10000;
         let base_ts = 1700000000000i64;
-        let num_batches = (count + batch_size - 1) / batch_size;
+        let num_batches = count.div_ceil(batch_size);
 
         for batch in 0..num_batches {
             let start_idx = batch * batch_size;

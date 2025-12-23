@@ -161,12 +161,12 @@ mod tests {
 
     #[test]
     fn test_as_double() {
-        let v = Value::Double(OrderedFloat::from(3.14));
-        assert_eq!(v.as_double(), Some(3.14));
+        let v = Value::Double(OrderedFloat::from(2.72));
+        assert_eq!(v.as_double(), Some(2.72));
 
         // Wrong type returns None
         assert_eq!(Value::Long(42).as_double(), None);
-        assert_eq!(Value::String("3.14".to_string()).as_double(), None);
+        assert_eq!(Value::String("2.72".to_string()).as_double(), None);
         assert_eq!(Value::Null.as_double(), None);
     }
 
@@ -261,8 +261,8 @@ mod tests {
 
     #[test]
     fn test_display_double() {
-        let v = Value::Double(OrderedFloat::from(3.14159));
-        assert!(v.to_string().starts_with("3.14"));
+        let v = Value::Double(OrderedFloat::from(1.23456));
+        assert!(v.to_string().starts_with("1.23"));
     }
 
     #[test]

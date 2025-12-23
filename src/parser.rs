@@ -434,8 +434,8 @@ mod tests {
 
     #[test]
     fn test_parse_value_double() {
-        let v = parse_value("3.14", DataType::Double, "test").unwrap();
-        assert_eq!(v, Value::Double(OrderedFloat::from(3.14)));
+        let v = parse_value("2.72", DataType::Double, "test").unwrap();
+        assert_eq!(v, Value::Double(OrderedFloat::from(2.72)));
     }
 
     #[test]
@@ -511,7 +511,7 @@ mod tests {
     #[test]
     fn test_parse_value_duration() {
         let v = parse_value("1h30m", DataType::Duration, "test").unwrap();
-        let expected = chrono::Duration::nanoseconds(5400_000_000_000); // 1.5 hours in nanos
+        let expected = chrono::Duration::nanoseconds(5_400_000_000_000); // 1.5 hours in nanos
         assert_eq!(v, Value::Duration(expected));
     }
 
@@ -525,8 +525,8 @@ mod tests {
     #[test]
     fn test_parse_value_duration_complex() {
         let v = parse_value("2h45m30s", DataType::Duration, "test").unwrap();
-        // 2*3600 + 45*60 + 30 = 9930 seconds = 9930_000_000_000 ns
-        let expected = chrono::Duration::nanoseconds(9930_000_000_000);
+        // 2*3600 + 45*60 + 30 = 9930 seconds = 9_930_000_000_000 ns
+        let expected = chrono::Duration::nanoseconds(9_930_000_000_000);
         assert_eq!(v, Value::Duration(expected));
     }
 
@@ -844,7 +844,7 @@ mod tests {
 #group,false,false,false,false,false,false
 #default,,,,,,
 ,str,lng,ulng,dbl,bl,ts
-,hello,-42,18446744073709551615,3.14,true,2023-11-14T12:00:00Z
+,hello,-42,18446744073709551615,2.72,true,2023-11-14T12:00:00Z
 "#;
         let mut parser = parser_from_str(csv);
 
@@ -852,7 +852,7 @@ mod tests {
         assert_eq!(record.get_string("str"), Some("hello".to_string()));
         assert_eq!(record.get_long("lng"), Some(-42));
         assert_eq!(record.values.get("ulng").and_then(|v| v.as_unsigned_long()), Some(u64::MAX));
-        assert_eq!(record.get_double("dbl"), Some(3.14));
+        assert_eq!(record.get_double("dbl"), Some(2.72));
         assert_eq!(record.get_bool("bl"), Some(true));
         assert!(record.values.get("ts").and_then(|v| v.as_time()).is_some());
     }
