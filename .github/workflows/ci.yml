@@ -55,7 +55,7 @@ jobs:
           DOCKER_INFLUXDB_INIT_PASSWORD: adminpassword
           DOCKER_INFLUXDB_INIT_ORG: test-org
           DOCKER_INFLUXDB_INIT_BUCKET: test-bucket
-          DOCKER_INFLUXDB_INIT_ADMIN_TOKEN: test-token
+          DOCKER_INFLUXDB_INIT_ADMIN_TOKEN: test-token-for-development-only
         options: >-
           --health-cmd "curl -f http://localhost:8086/health"
           --health-interval 10s
@@ -68,7 +68,7 @@ jobs:
       - run: cargo test --test integration
         env:
           INFLUXDB_URL: http://localhost:8086
-          INFLUXDB_TOKEN: test-token
+          INFLUXDB_TOKEN: test-token-for-development-only
           INFLUXDB_ORG: test-org
           INFLUXDB_BUCKET: test-bucket
 
