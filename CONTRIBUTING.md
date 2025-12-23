@@ -16,7 +16,7 @@ This project adheres to the [Rust Code of Conduct](https://www.rust-lang.org/pol
 ### Setup
 
 ```bash
-git clone https://github.com/aniai-dev/influxdb-stream.git
+git clone https://github.com/almightychang/influxdb-stream.git
 cd influxdb-stream
 cargo build
 ```

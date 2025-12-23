@@ -1,10 +1,10 @@
 [package]
 name = "influxdb-stream"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2024"
-authors = ["Aniai <contact@aniai.ai>"]
+authors = ["almightychang <almightychang@icloud.com>"]
 description = "Async streaming client for InfluxDB 2.x - query millions of rows without OOM"
-repository = "https://github.com/aniai-dev/influxdb-stream"
+repository = "https://github.com/almightychang/influxdb-stream"
 license = "MIT"
 keywords = ["influxdb", "streaming", "async", "timeseries", "database"]
 categories = ["database", "asynchronous"]

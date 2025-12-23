@@ -336,4 +336,4 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## Acknowledgments
 
-This project was extracted from production code at [Aniai](https://aniai.ai), where it has been battle-tested processing billions of time-series data points for industrial IoT applications.
+This project has been battle-tested in production, processing billions of time-series data points for industrial IoT applications.
