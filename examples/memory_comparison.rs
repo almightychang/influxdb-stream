@@ -141,9 +141,7 @@ fn main() {
             tokio::time::sleep(Duration::from_millis(500)).await;
             let baseline = get_process_memory_mb();
 
-            let client = influxdb_stream::Client::new(
-                INFLUXDB_URL, INFLUXDB_ORG, INFLUXDB_TOKEN,
-            );
+            let client = influxdb_stream::Client::new(INFLUXDB_URL, INFLUXDB_ORG, INFLUXDB_TOKEN);
             let query = format!(
                 r#"from(bucket: "{}")
                    |> range(start: 2023-01-01T00:00:00Z)
@@ -182,9 +180,7 @@ fn main() {
             tokio::time::sleep(Duration::from_millis(500)).await;
             let baseline = get_process_memory_mb();
 
-            let client = influxdb2::Client::new(
-                INFLUXDB_URL, INFLUXDB_ORG, INFLUXDB_TOKEN,
-            );
+            let client = influxdb2::Client::new(INFLUXDB_URL, INFLUXDB_ORG, INFLUXDB_TOKEN);
             let flux_query = format!(
                 r#"from(bucket: "{}")
                    |> range(start: 2023-01-01T00:00:00Z)
@@ -225,6 +221,8 @@ fn main() {
 
     println!("╚══════════════════════════════════════════════════════════════════════════════╝");
     println!();
-    println!("Note: influxdb-stream uses O(1) memory (streaming), influxdb2 uses O(n) memory (Vec).");
+    println!(
+        "Note: influxdb-stream uses O(1) memory (streaming), influxdb2 uses O(n) memory (Vec)."
+    );
     println!();
 }

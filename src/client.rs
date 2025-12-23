@@ -212,11 +212,7 @@ impl Client {
             .error_for_status()?;
 
         // Convert the response body to an async reader
-        let reader = StreamReader::new(
-            response
-                .bytes_stream()
-                .map_err(std::io::Error::other),
-        );
+        let reader = StreamReader::new(response.bytes_stream().map_err(std::io::Error::other));
 
         let mut parser = AnnotatedCsvParser::new(reader);
 

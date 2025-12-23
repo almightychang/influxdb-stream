@@ -279,10 +279,7 @@ fn parse_error_response(row: &StringRecord) -> Error {
         .map(|s| s.to_string())
         .unwrap_or_else(|| "Unknown query error".to_string());
 
-    let reference = row
-        .get(2)
-        .filter(|s| !s.is_empty())
-        .map(|s| s.to_string());
+    let reference = row.get(2).filter(|s| !s.is_empty()).map(|s| s.to_string());
 
     Error::QueryError { message, reference }
 }
@@ -390,10 +387,7 @@ fn parse_value(s: &str, data_type: DataType, column_name: &str) -> Result<Value>
             let bytes = base64::engine::general_purpose::STANDARD
                 .decode(s)
                 .map_err(|e| Error::Parse {
-                    message: format!(
-                        "Invalid base64 '{}' for column '{}': {}",
-                        s, column_name, e
-                    ),
+                    message: format!("Invalid base64 '{}' for column '{}': {}", s, column_name, e),
                 })?;
             Ok(Value::Base64Binary(bytes))
         }
@@ -586,13 +580,34 @@ mod tests {
 
     #[test]
     fn test_parse_value_empty_is_null_for_all_non_string_types() {
-        assert_eq!(parse_value("", DataType::Double, "test").unwrap(), Value::Null);
-        assert_eq!(parse_value("", DataType::Long, "test").unwrap(), Value::Null);
-        assert_eq!(parse_value("", DataType::UnsignedLong, "test").unwrap(), Value::Null);
-        assert_eq!(parse_value("", DataType::Bool, "test").unwrap(), Value::Null);
-        assert_eq!(parse_value("", DataType::Duration, "test").unwrap(), Value::Null);
-        assert_eq!(parse_value("", DataType::Base64Binary, "test").unwrap(), Value::Null);
-        assert_eq!(parse_value("", DataType::TimeRFC, "test").unwrap(), Value::Null);
+        assert_eq!(
+            parse_value("", DataType::Double, "test").unwrap(),
+            Value::Null
+        );
+        assert_eq!(
+            parse_value("", DataType::Long, "test").unwrap(),
+            Value::Null
+        );
+        assert_eq!(
+            parse_value("", DataType::UnsignedLong, "test").unwrap(),
+            Value::Null
+        );
+        assert_eq!(
+            parse_value("", DataType::Bool, "test").unwrap(),
+            Value::Null
+        );
+        assert_eq!(
+            parse_value("", DataType::Duration, "test").unwrap(),
+            Value::Null
+        );
+        assert_eq!(
+            parse_value("", DataType::Base64Binary, "test").unwrap(),
+            Value::Null
+        );
+        assert_eq!(
+            parse_value("", DataType::TimeRFC, "test").unwrap(),
+            Value::Null
+        );
     }
 
     // =========================================================================
@@ -851,7 +866,10 @@ mod tests {
         let record = parser.next().await.unwrap().unwrap();
         assert_eq!(record.get_string("str"), Some("hello".to_string()));
         assert_eq!(record.get_long("lng"), Some(-42));
-        assert_eq!(record.values.get("ulng").and_then(|v| v.as_unsigned_long()), Some(u64::MAX));
+        assert_eq!(
+            record.values.get("ulng").and_then(|v| v.as_unsigned_long()),
+            Some(u64::MAX)
+        );
         assert_eq!(record.get_double("dbl"), Some(2.72));
         assert_eq!(record.get_bool("bl"), Some(true));
         assert!(record.values.get("ts").and_then(|v| v.as_time()).is_some());

@@ -196,11 +196,17 @@ mod tests {
     #[test]
     fn test_as_unsigned_long() {
         assert_eq!(Value::UnsignedLong(42).as_unsigned_long(), Some(42));
-        assert_eq!(Value::UnsignedLong(u64::MAX).as_unsigned_long(), Some(u64::MAX));
+        assert_eq!(
+            Value::UnsignedLong(u64::MAX).as_unsigned_long(),
+            Some(u64::MAX)
+        );
 
         // Wrong type returns None
         assert_eq!(Value::Long(42).as_unsigned_long(), None);
-        assert_eq!(Value::Double(OrderedFloat::from(42.0)).as_unsigned_long(), None);
+        assert_eq!(
+            Value::Double(OrderedFloat::from(42.0)).as_unsigned_long(),
+            None
+        );
         assert_eq!(Value::Null.as_unsigned_long(), None);
     }
 
@@ -280,7 +286,10 @@ mod tests {
     #[test]
     fn test_display_unsigned_long() {
         assert_eq!(Value::UnsignedLong(42).to_string(), "42");
-        assert_eq!(Value::UnsignedLong(u64::MAX).to_string(), "18446744073709551615");
+        assert_eq!(
+            Value::UnsignedLong(u64::MAX).to_string(),
+            "18446744073709551615"
+        );
     }
 
     #[test]
@@ -315,8 +324,14 @@ mod tests {
 
     #[test]
     fn test_value_equality() {
-        assert_eq!(Value::String("a".to_string()), Value::String("a".to_string()));
-        assert_ne!(Value::String("a".to_string()), Value::String("b".to_string()));
+        assert_eq!(
+            Value::String("a".to_string()),
+            Value::String("a".to_string())
+        );
+        assert_ne!(
+            Value::String("a".to_string()),
+            Value::String("b".to_string())
+        );
 
         assert_eq!(Value::Long(42), Value::Long(42));
         assert_ne!(Value::Long(42), Value::Long(43));

@@ -194,11 +194,23 @@ mod tests {
         assert_eq!(DataType::from_str("double").unwrap(), DataType::Double);
         assert_eq!(DataType::from_str("boolean").unwrap(), DataType::Bool);
         assert_eq!(DataType::from_str("long").unwrap(), DataType::Long);
-        assert_eq!(DataType::from_str("unsignedLong").unwrap(), DataType::UnsignedLong);
+        assert_eq!(
+            DataType::from_str("unsignedLong").unwrap(),
+            DataType::UnsignedLong
+        );
         assert_eq!(DataType::from_str("duration").unwrap(), DataType::Duration);
-        assert_eq!(DataType::from_str("base64Binary").unwrap(), DataType::Base64Binary);
-        assert_eq!(DataType::from_str("dateTime:RFC3339").unwrap(), DataType::TimeRFC);
-        assert_eq!(DataType::from_str("dateTime:RFC3339Nano").unwrap(), DataType::TimeRFC);
+        assert_eq!(
+            DataType::from_str("base64Binary").unwrap(),
+            DataType::Base64Binary
+        );
+        assert_eq!(
+            DataType::from_str("dateTime:RFC3339").unwrap(),
+            DataType::TimeRFC
+        );
+        assert_eq!(
+            DataType::from_str("dateTime:RFC3339Nano").unwrap(),
+            DataType::TimeRFC
+        );
     }
 
     #[test]
@@ -222,7 +234,16 @@ mod tests {
     #[test]
     fn test_datatype_roundtrip() {
         // Parse and display should be consistent
-        for type_str in ["string", "double", "boolean", "long", "unsignedLong", "duration", "base64Binary", "dateTime:RFC3339"] {
+        for type_str in [
+            "string",
+            "double",
+            "boolean",
+            "long",
+            "unsignedLong",
+            "duration",
+            "base64Binary",
+            "dateTime:RFC3339",
+        ] {
             let dt = DataType::from_str(type_str).unwrap();
             assert_eq!(dt.to_string(), type_str);
         }
@@ -287,7 +308,9 @@ mod tests {
     #[test]
     fn test_flux_record_get() {
         let mut record = FluxRecord::new(0);
-        record.values.insert("key".to_string(), Value::String("value".to_string()));
+        record
+            .values
+            .insert("key".to_string(), Value::String("value".to_string()));
 
         assert!(record.get("key").is_some());
         assert_eq!(record.get("key"), Some(&Value::String("value".to_string())));
@@ -297,7 +320,9 @@ mod tests {
     #[test]
     fn test_flux_record_get_string() {
         let mut record = FluxRecord::new(0);
-        record.values.insert("name".to_string(), Value::String("alice".to_string()));
+        record
+            .values
+            .insert("name".to_string(), Value::String("alice".to_string()));
         record.values.insert("count".to_string(), Value::Long(42));
 
         assert_eq!(record.get_string("name"), Some("alice".to_string()));
@@ -308,8 +333,12 @@ mod tests {
     #[test]
     fn test_flux_record_get_double() {
         let mut record = FluxRecord::new(0);
-        record.values.insert("value".to_string(), Value::Double(OrderedFloat::from(2.72)));
-        record.values.insert("name".to_string(), Value::String("test".to_string()));
+        record
+            .values
+            .insert("value".to_string(), Value::Double(OrderedFloat::from(2.72)));
+        record
+            .values
+            .insert("name".to_string(), Value::String("test".to_string()));
 
         assert_eq!(record.get_double("value"), Some(2.72));
         assert_eq!(record.get_double("name"), None); // Not a double
@@ -320,7 +349,9 @@ mod tests {
     fn test_flux_record_get_long() {
         let mut record = FluxRecord::new(0);
         record.values.insert("count".to_string(), Value::Long(-42));
-        record.values.insert("name".to_string(), Value::String("test".to_string()));
+        record
+            .values
+            .insert("name".to_string(), Value::String("test".to_string()));
 
         assert_eq!(record.get_long("count"), Some(-42));
         assert_eq!(record.get_long("name"), None); // Not a long
@@ -331,7 +362,9 @@ mod tests {
     fn test_flux_record_get_bool() {
         let mut record = FluxRecord::new(0);
         record.values.insert("flag".to_string(), Value::Bool(true));
-        record.values.insert("name".to_string(), Value::String("test".to_string()));
+        record
+            .values
+            .insert("name".to_string(), Value::String("test".to_string()));
 
         assert_eq!(record.get_bool("flag"), Some(true));
         assert_eq!(record.get_bool("name"), None); // Not a bool
@@ -342,7 +375,9 @@ mod tests {
     fn test_flux_record_time() {
         let mut record = FluxRecord::new(0);
         let dt = DateTime::parse_from_rfc3339("2023-11-14T12:00:00Z").unwrap();
-        record.values.insert("_time".to_string(), Value::TimeRFC(dt));
+        record
+            .values
+            .insert("_time".to_string(), Value::TimeRFC(dt));
 
         assert!(record.time().is_some());
         assert_eq!(record.time().unwrap().year(), 2023);
@@ -357,7 +392,9 @@ mod tests {
     #[test]
     fn test_flux_record_measurement() {
         let mut record = FluxRecord::new(0);
-        record.values.insert("_measurement".to_string(), Value::String("cpu".to_string()));
+        record
+            .values
+            .insert("_measurement".to_string(), Value::String("cpu".to_string()));
 
         assert_eq!(record.measurement(), Some("cpu".to_string()));
     }
@@ -371,7 +408,10 @@ mod tests {
     #[test]
     fn test_flux_record_field() {
         let mut record = FluxRecord::new(0);
-        record.values.insert("_field".to_string(), Value::String("temperature".to_string()));
+        record.values.insert(
+            "_field".to_string(),
+            Value::String("temperature".to_string()),
+        );
 
         assert_eq!(record.field(), Some("temperature".to_string()));
     }
@@ -385,10 +425,16 @@ mod tests {
     #[test]
     fn test_flux_record_value() {
         let mut record = FluxRecord::new(0);
-        record.values.insert("_value".to_string(), Value::Double(OrderedFloat::from(25.5)));
+        record.values.insert(
+            "_value".to_string(),
+            Value::Double(OrderedFloat::from(25.5)),
+        );
 
         assert!(record.value().is_some());
-        assert_eq!(record.value(), Some(&Value::Double(OrderedFloat::from(25.5))));
+        assert_eq!(
+            record.value(),
+            Some(&Value::Double(OrderedFloat::from(25.5)))
+        );
     }
 
     #[test]

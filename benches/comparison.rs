@@ -133,9 +133,8 @@ fn bench_throughput_comparison(c: &mut Criterion) {
             &size,
             |b, &_size| {
                 b.to_async(&rt).iter(|| async {
-                    let client = influxdb_stream::Client::new(
-                        INFLUXDB_URL, INFLUXDB_ORG, INFLUXDB_TOKEN,
-                    );
+                    let client =
+                        influxdb_stream::Client::new(INFLUXDB_URL, INFLUXDB_ORG, INFLUXDB_TOKEN);
                     let query = format!(
                         r#"from(bucket: "{}")
                            |> range(start: 2023-01-01T00:00:00Z)
@@ -154,27 +153,21 @@ fn bench_throughput_comparison(c: &mut Criterion) {
             },
         );
 
-        group.bench_with_input(
-            BenchmarkId::new("influxdb2", size),
-            &size,
-            |b, &_size| {
-                b.to_async(&rt).iter(|| async {
-                    let client = influxdb2::Client::new(
-                        INFLUXDB_URL, INFLUXDB_ORG, INFLUXDB_TOKEN,
-                    );
-                    let flux_query = format!(
-                        r#"from(bucket: "{}")
+        group.bench_with_input(BenchmarkId::new("influxdb2", size), &size, |b, &_size| {
+            b.to_async(&rt).iter(|| async {
+                let client = influxdb2::Client::new(INFLUXDB_URL, INFLUXDB_ORG, INFLUXDB_TOKEN);
+                let flux_query = format!(
+                    r#"from(bucket: "{}")
                            |> range(start: 2023-01-01T00:00:00Z)
                            |> filter(fn: (r) => r._measurement == "{}")"#,
-                        INFLUXDB_BUCKET, measurement
-                    );
-                    let query = influxdb2::models::Query::new(flux_query);
+                    INFLUXDB_BUCKET, measurement
+                );
+                let query = influxdb2::models::Query::new(flux_query);
 
-                    let records = client.query_raw(Some(query)).await.unwrap_or_default();
-                    records.len()
-                });
-            },
-        );
+                let records = client.query_raw(Some(query)).await.unwrap_or_default();
+                records.len()
+            });
+        });
     }
 
     group.finish();
@@ -184,10 +177,7 @@ fn bench_throughput_comparison(c: &mut Criterion) {
 // Criterion Benchmarks
 // ============================================================================
 
-criterion_group!(
-    benches,
-    bench_throughput_comparison,
-);
+criterion_group!(benches, bench_throughput_comparison,);
 
 criterion_main!(benches);
 

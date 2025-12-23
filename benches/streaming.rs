@@ -131,29 +131,25 @@ fn bench_streaming_query(c: &mut Criterion) {
 
         group.throughput(Throughput::Elements(size as u64));
 
-        group.bench_with_input(
-            BenchmarkId::new("records", size),
-            &size,
-            |b, &_size| {
-                b.to_async(&rt).iter(|| async {
-                    let client = Client::new(INFLUXDB_URL, INFLUXDB_ORG, INFLUXDB_TOKEN);
-                    let query = format!(
-                        r#"from(bucket: "{}")
+        group.bench_with_input(BenchmarkId::new("records", size), &size, |b, &_size| {
+            b.to_async(&rt).iter(|| async {
+                let client = Client::new(INFLUXDB_URL, INFLUXDB_ORG, INFLUXDB_TOKEN);
+                let query = format!(
+                    r#"from(bucket: "{}")
                            |> range(start: 2023-01-01T00:00:00Z)
                            |> filter(fn: (r) => r._measurement == "{}")"#,
-                        INFLUXDB_BUCKET, measurement
-                    );
+                    INFLUXDB_BUCKET, measurement
+                );
 
-                    let mut stream = client.query_stream(&query).await.unwrap();
-                    let mut count = 0;
-                    while let Some(result) = stream.next().await {
-                        result.unwrap();
-                        count += 1;
-                    }
-                    count
-                });
-            },
-        );
+                let mut stream = client.query_stream(&query).await.unwrap();
+                let mut count = 0;
+                while let Some(result) = stream.next().await {
+                    result.unwrap();
+                    count += 1;
+                }
+                count
+            });
+        });
     }
 
     group.finish();

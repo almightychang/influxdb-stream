@@ -86,9 +86,9 @@ fn generate_line_protocol(measurement: &str, count: usize) -> String {
         lines.push(format!(
             "{},host=server{},region=us-east value={}.{} {}",
             measurement,
-            i % 10,       // 10 different hosts
-            i % 100,      // value integer part
-            i % 1000,     // value decimal part
+            i % 10,   // 10 different hosts
+            i % 100,  // value integer part
+            i % 1000, // value decimal part
             ts
         ));
     }
