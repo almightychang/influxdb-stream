@@ -7,6 +7,7 @@
 
 use futures::StreamExt;
 use influxdb_stream::Client;
+use serial_test::serial;
 use std::time::Duration;
 
 // Test configuration - matches docker-compose.yml
@@ -101,6 +102,7 @@ fn generate_line_protocol(measurement: &str, count: usize) -> String {
 // ============================================================================
 
 #[tokio::test]
+#[serial]
 async fn test_basic_query_stream() {
     if !influxdb_available().await {
         eprintln!("Skipping test: InfluxDB not available");
@@ -138,6 +140,7 @@ async fn test_basic_query_stream() {
 }
 
 #[tokio::test]
+#[serial]
 async fn test_empty_result() {
     if !influxdb_available().await {
         eprintln!("Skipping test: InfluxDB not available");
@@ -166,6 +169,7 @@ async fn test_empty_result() {
 }
 
 #[tokio::test]
+#[serial]
 async fn test_multiple_tables() {
     if !influxdb_available().await {
         eprintln!("Skipping test: InfluxDB not available");
@@ -208,6 +212,7 @@ async fn test_multiple_tables() {
 }
 
 #[tokio::test]
+#[serial]
 async fn test_query_collect() {
     if !influxdb_available().await {
         eprintln!("Skipping test: InfluxDB not available");
@@ -239,6 +244,7 @@ async fn test_query_collect() {
 // ============================================================================
 
 #[tokio::test]
+#[serial]
 async fn test_large_dataset_10k() {
     if !influxdb_available().await {
         eprintln!("Skipping test: InfluxDB not available");
@@ -282,6 +288,7 @@ async fn test_large_dataset_10k() {
 }
 
 #[tokio::test]
+#[serial]
 #[ignore] // Run with: cargo test --test integration test_large_dataset_100k -- --ignored
 async fn test_large_dataset_100k() {
     if !influxdb_available().await {
@@ -336,6 +343,7 @@ async fn test_large_dataset_100k() {
 // ============================================================================
 
 #[tokio::test]
+#[serial]
 async fn test_various_data_types() {
     if !influxdb_available().await {
         eprintln!("Skipping test: InfluxDB not available");
@@ -400,6 +408,7 @@ async fn test_various_data_types() {
 // ============================================================================
 
 #[tokio::test]
+#[serial]
 async fn test_invalid_query() {
     if !influxdb_available().await {
         eprintln!("Skipping test: InfluxDB not available");
@@ -415,6 +424,7 @@ async fn test_invalid_query() {
 }
 
 #[tokio::test]
+#[serial]
 async fn test_nonexistent_bucket() {
     if !influxdb_available().await {
         eprintln!("Skipping test: InfluxDB not available");
